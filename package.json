@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
     "watch": "mjml --w src/index.mjml --o dev/index.html",
     "server": "live-server --host=0.0.0.0",
