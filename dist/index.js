@@ -237,3 +237,4 @@ const genericEmail = (stuff) => {
     return mjml.html;
 };
 exports.genericEmail = genericEmail;
+//# sourceMappingURL=index.js.map

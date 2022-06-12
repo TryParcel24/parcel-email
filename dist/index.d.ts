@@ -10,3 +10,4 @@ export interface GenericEmail {
     address: string;
 }
 export declare const genericEmail: (stuff: GenericEmail) => string;
+//# sourceMappingURL=index.d.ts.map
