@@ -2,14 +2,11 @@
   "name": "parcel-email",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
-  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "watch": "mjml --w src/index.mjml --o dev/index.html",
-    "server": "live-server --host=0.0.0.0",
     "dev": "ts-node src/server.ts",
-    "dev2": "concurrently 'npm run watch' 'npm run server'",
-    "build": "mjml src/index.mjml --o dist/index.html"
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
