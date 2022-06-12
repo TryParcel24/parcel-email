@@ -1,6 +1,5 @@
 import mjmlCore from "mjml";
 import { MJMLJsonObject } from "mjml-core";
-import { minify } from "html-minifier";
 
 export interface Action {
   label: string;
@@ -251,5 +250,5 @@ export const genericEmail = (stuff: GenericEmail) => {
   const mjml = mjmlCore(json);
 
   if (mjml.errors.length) throw mjml.errors;
-  return minify(mjml.html);
+  return mjml.html;
 };
