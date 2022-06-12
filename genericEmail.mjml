@@ -1,0 +1,61 @@
+  <mjml>
+    <mj-body background-color="#09273d">
+      <mj-section background-color="#fed12c">
+        <mj-column>
+          <mj-image src="https://parcel-media.s3.me-south-1.amazonaws.com/parcel_logo.png" alt="logo" width="600px" href="https://tryparcel.com" />
+        </mj-column>
+        <mj-column width="600px">
+          <mj-text color="#09273d" font-family="poppins, sans-serif" font-weight="bold" font-size="35px" padding-bottom="0px" padding-top="0px">
+            {{topic}}
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section padding="0px">
+        <mj-column>
+          <mj-divider border-color="#09273d" width="100%" padding="0px"></mj-divider>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#e5e7eb">
+        <mj-column width="600px">
+          <mj-text color="#09273d" font-family="poppins, sans-serif" font-weight="bold" font-size="25px">
+            {{contentHeadler}}
+          </mj-text>
+          <mj-text font-family="poppins, sans-serif">
+            {{content}}
+          </mj-text>
+          <mj-button padding-left="0px" padding-right="0px" font-family="poppins, sans-serif" border-radius="5px" font-size="20px" background-color="#fed12c" color="#09273d" font-weight="bold" href="{{url}}" target="_blank">{{action}}</mj-button>
+        </mj-column>
+      </mj-section>
+
+      <!-- Start Footer Section -->
+      <mj-section padding="0px">
+        <mj-column>
+          <mj-divider border-color="#09273d" width="100%" padding="0px"></mj-divider>
+        </mj-column>
+      </mj-section>
+      <mj-section padding="0px" background-color="#e5e7eb">
+        <mj-column>
+          <mj-social font-size="12px" icon-size="20px" mode="horizontal">
+            <mj-social-element padding="10px 5px" border-radius="99px" icon-size="25px" font-family="poppins, sans-serif" name="instagram-noshare" target="_blank" href="https://www.instagram.com/parcel_bh/">
+
+            </mj-social-element>
+            <mj-social-element padding="10px 5px" border-radius="99px" icon-size="25px" font-family="poppins, sans-serif" name="facebook-noshare" target="_blank" href="https://www.instagram.com/parcel_bh/">
+
+            </mj-social-element>
+            <mj-social-element padding="10px 5px" border-radius="99px" icon-size="25px" font-family="poppins, sans-serif" name="twitter-noshare" target="_blank" href="https://www.instagram.com/parcel_bh/">
+
+            </mj-social-element>
+            <mj-social-element padding="10px 5px" border-radius="99px" icon-size="25px" font-family="poppins, sans-serif" name="linkedin-noshare" target="_blank" href="https://www.instagram.com/parcel_bh/">
+
+            </mj-social-element>
+            <mj-social-element padding="10px 5px" border-radius="99px" icon-size="25px" font-family="poppins, sans-serif" src="https://parcel-media.s3.me-south-1.amazonaws.com/www.png" target="_blank" href="https://tryparcel.com">
+
+            </mj-social-element>
+          </mj-social>
+          <mj-text align="center" font-size="10px">{{address}}</mj-text>
+
+        </mj-column>
+      </mj-section>
+      <!-- End Footer Section -->
+    </mj-body>
+  </mjml>
