@@ -240,6 +240,34 @@ export const genericEmail = (stuff: GenericEmail) => {
     attributes: {},
     children: [
       {
+        tagName: "mj-head",
+        attributes: {},
+        children: [
+          {
+            tagName: "mj-raw",
+            attributes: {},
+            content: `<meta name="color-scheme" content="dark" />
+            <meta name="supported-color-schemes" content="dark" />`,
+            // children: [
+            //   {
+            //     tagName: "meta",
+            //     attributes: {
+            //       name: "color-scheme",
+            //       content: "dark",
+            //     },
+            //   },
+            //   {
+            //     tagName: "meta",
+            //     attributes: {
+            //       name: "supported-color-schemes",
+            //       content: "dark",
+            //     },
+            //   },
+            // ],
+          },
+        ],
+      },
+      {
         tagName: "mj-body",
         attributes: { "background-color": "#09273D" },
         children: [headerSection, divider, content, divider, footer],
