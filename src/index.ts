@@ -104,7 +104,7 @@ export const genericEmail = (input: GenericEmail) => {
             attributes: {
               src: "https://parcel-media.s3.me-south-1.amazonaws.com/parcel_logo.png",
               alt: "logo",
-              width: "600px",
+              width: "200px",
               href: "https://tryparcel.com",
             },
           },
