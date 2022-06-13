@@ -127,9 +127,9 @@ const genericEmail = (input) => {
                 tagName: "mj-button",
                 attributes: {
                     padding: "10px 0px 0px 0px",
-                    "inner-padding": "5px 30px",
+                    "inner-padding": "10px 30px",
                     "border-radius": "5px",
-                    "font-size": "18px",
+                    "font-size": "16px",
                     "background-color": object.colors.actionsBackgroundColor,
                     color: object.colors.actionsFontColor,
                     "font-weight": "bold",
@@ -224,6 +224,7 @@ const genericEmail = (input) => {
         body.push(divider);
         body.push(footerSection);
     }
+    body.push(divider);
     const json = {
         tagName: "mjml",
         attributes: {},
@@ -232,6 +233,10 @@ const genericEmail = (input) => {
                 tagName: "mj-head",
                 attributes: {},
                 children: [
+                    ...Object.entries(object.fonts).map(([name, href]) => ({
+                        tagName: "mj-font",
+                        attributes: { name, href },
+                    })),
                     {
                         tagName: "mj-attributes",
                         attributes: {},
@@ -263,7 +268,7 @@ const genericEmail = (input) => {
         ],
     };
     const mjml = (0, mjml_1.default)(json, {
-        fonts: exports.defaultValues.fonts,
+        fonts: object.fonts,
         validationLevel: "skip",
     });
     if (mjml.errors.length)
