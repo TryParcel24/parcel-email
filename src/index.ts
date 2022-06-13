@@ -1,20 +1,74 @@
 import mjmlCore from "mjml";
 import { MJMLJsonObject } from "mjml-core";
 
+interface Socials {
+  [key: string]: { href?: string; src?: string; order?: number } | undefined;
+}
+interface Colors {
+  background: string;
+  superHeaderBackground: string;
+  superHeaderFontColor: string;
+  // contentHeaderBackground: string;
+  contentHeaderFontColor: string;
+  contentBackground: string;
+  contentFontColor: string;
+  fontColor: string;
+  actionsBackgroundColor: string;
+  actionsFontColor: string;
+  footerBackground: string;
+  // primaryActionFontColor: string;
+  // primaryActionBackgroundColor: string;
+}
+interface DefaultValues {
+  address?: string;
+  socials: Socials;
+  colors: Colors;
+  fonts: { [key: string]: string };
+}
+
+export const defaultValues: DefaultValues = {
+  socials: {},
+  colors: {
+    background: "#09273D",
+    contentBackground: "#E5E7EB",
+    // contentHeaderBackground: "#E5E7EB",
+    contentFontColor: "#09273D",
+    contentHeaderFontColor: "#09273D",
+    superHeaderBackground: "#FED12C",
+    superHeaderFontColor: "#09273D",
+    fontColor: "#09273D",
+    actionsBackgroundColor: "#fed12c",
+    actionsFontColor: "",
+    footerBackground: "#E5E7EB",
+  },
+  fonts: {
+    "exo 2": "https://fonts.googleapis.com/css2?family=Exo+2",
+  },
+};
+
 export interface Action {
   label: string;
   url: string;
 }
 
-export interface GenericEmail {
-  topic: string;
+export interface GenericEmail extends Partial<DefaultValues> {
+  superHeader?: string;
   content: string;
   contentHeader: string;
-  actions: Action[];
-  address: string;
+  actions?: Action[];
 }
 
-export const genericEmail = (stuff: GenericEmail) => {
+export const genericEmail = (input: GenericEmail) => {
+  const object: DefaultValues & GenericEmail = { ...defaultValues, ...input };
+  Object.keys(object.colors)
+    .filter((key) => key.includes("FontColor"))
+    .forEach((_key) => {
+      const key = _key as keyof typeof object.colors;
+      if (!object.colors[key]) {
+        object.colors[key] = object.colors.fontColor;
+      }
+    });
+
   // GENERICS
   const divider: MJMLJsonObject = {
     tagName: "mj-section",
@@ -39,7 +93,7 @@ export const genericEmail = (stuff: GenericEmail) => {
   // -- HEADER SECTION START --
   const headerSection: MJMLJsonObject = {
     tagName: "mj-section",
-    attributes: { "background-color": "#FED12C" },
+    attributes: { "background-color": object.colors.superHeaderBackground },
     children: [
       {
         tagName: "mj-column",
@@ -56,88 +110,90 @@ export const genericEmail = (stuff: GenericEmail) => {
           },
         ],
       },
-      {
-        tagName: "mj-column",
-        attributes: { width: "600px" },
-        children: [
-          {
-            tagName: "mj-text",
-            attributes: {
-              color: "#09273d",
-              "font-family": "poppins, sans-serif",
-              "font-weight": "bold",
-              "font-size": "35px",
-              "padding-bottom": "0px",
-              "padding-top": "0px",
-            },
-            content: stuff.topic,
-          },
-        ],
-      },
     ],
   };
+
+  if (object.superHeader)
+    headerSection.children.push({
+      tagName: "mj-column",
+      attributes: { width: "600px" },
+      children: [
+        {
+          tagName: "mj-text",
+          attributes: {
+            color: object.colors.superHeaderFontColor,
+            "font-weight": "900",
+            "font-size": "35px",
+            "padding-bottom": "0px",
+            "padding-top": "0px",
+          },
+          content: object.superHeader,
+        },
+      ],
+    });
   // -- HEADER SECTION END --
+
   // -- CONTENT START --
   const contentHeader: MJMLJsonObject = {
     tagName: "mj-text",
     attributes: {
-      color: "#09273d",
-      "font-family": "poppins, sans-serif",
+      color: object.colors.contentHeaderFontColor,
       "font-weight": "bold",
       "font-size": "22px",
     },
     children: [],
-    content: stuff.contentHeader,
+    content: object.contentHeader,
   };
 
   const contentBody: MJMLJsonObject = {
     tagName: "mj-text",
     attributes: {
       "font-size": "16px",
-      color: "#333",
+      color: object.colors.contentFontColor,
       align: "left",
       "line-height": "1.4",
     },
     children: [],
-    content: stuff.content,
+    content: object.content,
   };
 
-  const contentActions: MJMLJsonObject[] = stuff.actions.map((action) => ({
-    tagName: "mj-button",
-    attributes: {
-      "padding-left": "0px",
-      "padding-right": "0px",
-      "font-family": "poppins, sans-serif",
-      "border-radius": "5px",
-      "font-size": "20px",
-      "background-color": "#fed12c",
-      color: "#09273d",
-      "font-weight": "bold",
-      href: action.url,
-      target: "_blank",
-    },
-    content: action.label,
-  }));
+  const contentActions: MJMLJsonObject[] =
+    object.actions?.map((action) => ({
+      tagName: "mj-column",
+      attributes: {},
+      children: [
+        {
+          tagName: "mj-button",
+          attributes: {
+            padding: "10px 0px 0px 0px",
+            "inner-padding": "5px 30px",
+            "border-radius": "5px",
+            "font-size": "18px",
+            "background-color": object.colors.actionsBackgroundColor,
+            color: object.colors.actionsFontColor,
+            "font-weight": "bold",
+            href: action.url,
+            target: "_blank",
+          },
+          content: action.label,
+        },
+      ],
+    })) || [];
 
   const contentActionsContainer: MJMLJsonObject = {
     tagName: "mj-group",
     attributes: { width: "100%" },
-    children: contentActions.map((action) => ({
-      tagName: "mj-column",
-      attributes: {},
-      children: [action],
-    })),
+    children: contentActions,
   };
 
   const content: MJMLJsonObject = {
     tagName: "mj-section",
-    attributes: { "background-color": "#E5E7EB" },
+    attributes: { "background-color": object.colors.contentBackground },
     children: [
       {
         tagName: "mj-column",
         attributes: { width: "100%" },
         children: [contentHeader, contentBody],
-        content: undefined,
       },
       contentActionsContainer,
     ],
@@ -145,97 +201,78 @@ export const genericEmail = (stuff: GenericEmail) => {
   // -- CONTENT END --
 
   // -- FOOTER START --
-  const socials: MJMLJsonObject = {
-    tagName: "mj-social",
-    attributes: {
-      "font-size": "12px",
-      "icon-size": "20px",
-      mode: "horizontal",
-    },
-    children: [
-      {
-        tagName: "mj-social-element",
-        attributes: {
-          name: "instagram-noshare",
-          href: "https://www.instagram.com/parcel_bh/",
-          padding: "10px 5px",
-          "border-radius": "99px",
-          "icon-size": "25px",
-          "font-family": "poppins, sans-serif",
-          target: "_blank",
-        },
-      },
-      {
-        tagName: "mj-social-element",
-        attributes: {
-          name: "twitter-noshare",
-          href: "https://twitter.com/parcel24bh/",
-          padding: "10px 5px",
-          "border-radius": "99px",
-          "icon-size": "25px",
-          "font-family": "poppins, sans-serif",
-          target: "_blank",
-        },
-      },
-      {
-        tagName: "mj-social-element",
-        attributes: {
-          name: "facebook-noshare",
-          href: "https://www.facebook.com/parcel.bh/",
-          padding: "10px 5px",
-          "border-radius": "99px",
-          "icon-size": "25px",
-          "font-family": "poppins, sans-serif",
-          target: "_blank",
-        },
-      },
-      {
-        tagName: "mj-social-element",
-        attributes: {
-          name: "linkedin-noshare",
-          href: "https://www.linkedin.com/company/tryparcel/",
-          padding: "10px 5px",
-          "border-radius": "99px",
-          "icon-size": "25px",
-          "font-family": "poppins, sans-serif",
-          target: "_blank",
-        },
-      },
-      {
-        tagName: "mj-social-element",
-        attributes: {
-          src: "https://parcel-media.s3.me-south-1.amazonaws.com/www.png",
-          href: "https://tryparcel.com/",
-          padding: "10px 5px",
-          "border-radius": "99px",
-          "icon-size": "25px",
-          "font-family": "poppins, sans-serif",
-          target: "_blank",
-        },
-      },
-    ],
-  };
   const footer: MJMLJsonObject = {
-    tagName: "mj-section",
-    attributes: { padding: "0px", "background-color": "#e5e7eb" },
-    children: [
-      {
-        tagName: "mj-column",
-        attributes: {},
-        children: [
-          socials,
-          {
-            tagName: "mj-text",
-            attributes: { align: "center", "font-size": "10px" },
-            content: stuff.address,
-          },
-        ],
+    tagName: "mj-column",
+    attributes: {},
+    children: [],
+  };
+  const socialElements = Object.entries(object.socials)
+    .filter(([, value]) => value)
+    .sort(([, a], [, b]) => {
+      if (typeof a?.order === "number" && typeof b?.order === "number")
+        return a.order - b.order;
+      if (typeof a?.order === "number") return 1;
+      if (typeof b?.order === "number") return -1;
+      return 1;
+    })
+    .map(
+      ([name, value]): MJMLJsonObject => ({
+        tagName: "mj-social-element",
+        attributes: {
+          name,
+          ...value,
+          padding: "3px 5px",
+          "icon-size": "25px",
+          "border-radius": "99px",
+          target: "_blank",
+        },
+      })
+    );
+
+  if (socialElements.length)
+    footer.children.push({
+      tagName: "mj-social",
+      attributes: {
+        "font-size": "12px",
+        "icon-size": "20px",
+        mode: "horizontal",
       },
-    ],
+      children: socialElements,
+    });
+
+  if (object.address)
+    footer.children.push({
+      tagName: "mj-text",
+      attributes: { align: "center", "font-size": "10px" },
+      content: object.address,
+    });
+
+  const footerSection: MJMLJsonObject = {
+    tagName: "mj-section",
+    attributes: {
+      padding: "2px",
+      "background-color": object.colors.footerBackground,
+    },
+    children: [footer],
   };
   // -- FOOTER END --
 
-  const json: Parameters<typeof mjmlCore>[0] = {
+  //
+  const body: MJMLJsonObject[] = [];
+
+  if (headerSection.children.length) {
+    body.push(headerSection);
+  }
+  if (content.children.length) {
+    body.push(divider);
+    body.push(content);
+  }
+  if (footer.children.length) {
+    body.push(divider);
+    body.push(footerSection);
+  }
+
+  const json: MJMLJsonObject = {
     tagName: "mjml",
     attributes: {},
     children: [
@@ -244,38 +281,40 @@ export const genericEmail = (stuff: GenericEmail) => {
         attributes: {},
         children: [
           {
+            tagName: "mj-attributes",
+            attributes: {},
+            children: [
+              {
+                tagName: "mj-all",
+                attributes: {
+                  "font-family": "'Exo 2', sans-serif;",
+                  color: object.colors.fontColor,
+                },
+              },
+            ],
+          },
+          {
             tagName: "mj-raw",
             attributes: {},
-            content: `<meta name="color-scheme" content="dark" />
-            <meta name="supported-color-schemes" content="dark" />`,
-            // children: [
-            //   {
-            //     tagName: "meta",
-            //     attributes: {
-            //       name: "color-scheme",
-            //       content: "dark",
-            //     },
-            //   },
-            //   {
-            //     tagName: "meta",
-            //     attributes: {
-            //       name: "supported-color-schemes",
-            //       content: "dark",
-            //     },
-            //   },
-            // ],
+            content: `
+            <meta name="color-scheme" content="dark" />
+            <meta name="supported-color-schemes" content="dark" />
+            `,
           },
         ],
       },
       {
         tagName: "mj-body",
-        attributes: { "background-color": "#09273D" },
-        children: [headerSection, divider, content, divider, footer],
+        attributes: { "background-color": object.colors.background },
+        children: body,
       },
     ],
   };
 
-  const mjml = mjmlCore(json);
+  const mjml = mjmlCore(json, {
+    fonts: defaultValues.fonts,
+    validationLevel: "skip",
+  });
 
   if (mjml.errors.length) throw mjml.errors;
   return mjml.html;

@@ -1,7 +1,7 @@
 import { GenericEmail } from ".";
 
 export const genericEmailDefaultValues: GenericEmail = {
-  topic: "Topic",
+  superHeader: "Topic",
   contentHeader: "Content Header",
   content: `Non esse sit sit non nisi voluptate cillum dolor nisi ut sunt. Qui ipsum adipisicing eiusmod officia adipisicing nisi ullamco. Adipisicing laboris fugiat irure dolor dolor pariatur occaecat aliquip et sit aliqua. Id Lorem proident ut commodo est. Excepteur amet proident do labore aliqua veniam minim culpa. Excepteur veniam incididunt quis ullamco aute anim quis Lorem duis. Veniam est aute nostrud sint dolore excepteur id ex dolore enim est duis labore occaecat.`,
   actions: [
