@@ -70,7 +70,7 @@ const genericEmail = (input) => {
                         attributes: {
                             src: "https://parcel-media.s3.me-south-1.amazonaws.com/parcel_logo.png",
                             alt: "logo",
-                            width: "600px",
+                            width: "200px",
                             href: "https://tryparcel.com",
                         },
                     },
@@ -264,7 +264,7 @@ const genericEmail = (input) => {
     };
     const mjml = (0, mjml_1.default)(json, {
         fonts: exports.defaultValues.fonts,
-        validationLevel: "soft",
+        validationLevel: "skip",
     });
     if (mjml.errors.length)
         throw mjml.errors;
