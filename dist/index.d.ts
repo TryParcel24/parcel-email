@@ -30,10 +30,13 @@ export interface Action {
     label: string;
     url: string;
 }
-export interface GenericEmail extends Partial<DefaultValues> {
+export interface BaseEmail {
+    preview?: string;
+}
+export interface GenericEmail extends Partial<DefaultValues>, BaseEmail {
     superHeader?: string;
-    content: string;
     contentHeader: string;
+    content: string;
     actions?: Action[];
 }
 export declare const genericEmail: (input: GenericEmail) => string;

@@ -225,6 +225,41 @@ const genericEmail = (input) => {
         body.push(footerSection);
     }
     body.push(divider);
+    // HEAD
+    const head = [
+        ...Object.entries(object.fonts).map(([name, href]) => ({
+            tagName: "mj-font",
+            attributes: { name, href },
+        })),
+        {
+            tagName: "mj-attributes",
+            attributes: {},
+            children: [
+                {
+                    tagName: "mj-all",
+                    attributes: {
+                        "font-family": "'Exo 2', sans-serif;",
+                        color: object.colors.fontColor,
+                    },
+                },
+            ],
+        },
+        {
+            tagName: "mj-raw",
+            attributes: {},
+            content: `
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    `,
+        },
+    ];
+    if (input.preview)
+        head.push({
+            tagName: "mj-preview",
+            attributes: {},
+            content: input.preview,
+        });
+    // full
     const json = {
         tagName: "mjml",
         attributes: {},
@@ -232,33 +267,7 @@ const genericEmail = (input) => {
             {
                 tagName: "mj-head",
                 attributes: {},
-                children: [
-                    ...Object.entries(object.fonts).map(([name, href]) => ({
-                        tagName: "mj-font",
-                        attributes: { name, href },
-                    })),
-                    {
-                        tagName: "mj-attributes",
-                        attributes: {},
-                        children: [
-                            {
-                                tagName: "mj-all",
-                                attributes: {
-                                    "font-family": "'Exo 2', sans-serif;",
-                                    color: object.colors.fontColor,
-                                },
-                            },
-                        ],
-                    },
-                    {
-                        tagName: "mj-raw",
-                        attributes: {},
-                        content: `
-            <meta name="color-scheme" content="dark" />
-            <meta name="supported-color-schemes" content="dark" />
-            `,
-                    },
-                ],
+                children: head,
             },
             {
                 tagName: "mj-body",

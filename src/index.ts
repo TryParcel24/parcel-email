@@ -51,10 +51,14 @@ export interface Action {
   url: string;
 }
 
-export interface GenericEmail extends Partial<DefaultValues> {
+export interface BaseEmail {
+  preview?: string;
+}
+
+export interface GenericEmail extends Partial<DefaultValues>, BaseEmail {
   superHeader?: string;
-  content: string;
   contentHeader: string;
+  content: string;
   actions?: Action[];
 }
 
@@ -274,6 +278,44 @@ export const genericEmail = (input: GenericEmail) => {
 
   body.push(divider);
 
+  // HEAD
+  const head: MJMLJsonObject[] = [
+    ...Object.entries(object.fonts).map(
+      ([name, href]): MJMLJsonObject => ({
+        tagName: "mj-font",
+        attributes: { name, href },
+      })
+    ),
+    {
+      tagName: "mj-attributes",
+      attributes: {},
+      children: [
+        {
+          tagName: "mj-all",
+          attributes: {
+            "font-family": "'Exo 2', sans-serif;",
+            color: object.colors.fontColor,
+          },
+        },
+      ],
+    },
+    {
+      tagName: "mj-raw",
+      attributes: {},
+      content: `
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    `,
+    },
+  ];
+  if (input.preview)
+    head.push({
+      tagName: "mj-preview",
+      attributes: {},
+      content: input.preview,
+    });
+  // full
+
   const json: MJMLJsonObject = {
     tagName: "mjml",
     attributes: {},
@@ -281,35 +323,7 @@ export const genericEmail = (input: GenericEmail) => {
       {
         tagName: "mj-head",
         attributes: {},
-        children: [
-          ...Object.entries(object.fonts).map(
-            ([name, href]): MJMLJsonObject => ({
-              tagName: "mj-font",
-              attributes: { name, href },
-            })
-          ),
-          {
-            tagName: "mj-attributes",
-            attributes: {},
-            children: [
-              {
-                tagName: "mj-all",
-                attributes: {
-                  "font-family": "'Exo 2', sans-serif;",
-                  color: object.colors.fontColor,
-                },
-              },
-            ],
-          },
-          {
-            tagName: "mj-raw",
-            attributes: {},
-            content: `
-            <meta name="color-scheme" content="dark" />
-            <meta name="supported-color-schemes" content="dark" />
-            `,
-          },
-        ],
+        children: head,
       },
       {
         tagName: "mj-body",
