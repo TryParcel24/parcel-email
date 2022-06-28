@@ -1,2 +1,2 @@
-# email-mjml
+# parcel-email
  
