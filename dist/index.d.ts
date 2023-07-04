@@ -25,20 +25,30 @@ interface DefaultValues {
         [key: string]: string;
     };
 }
-export declare const defaultValues: DefaultValues;
-export interface Action {
+declare const defaultValues: DefaultValues;
+interface Action {
     label: string;
     url: string;
 }
-export interface BaseEmail {
+interface BaseEmail {
     preview?: string;
 }
-export interface GenericEmail extends Partial<DefaultValues>, BaseEmail {
+interface GenericEmail extends Partial<DefaultValues>, BaseEmail {
     superHeader?: string;
     contentHeader: string;
     content: string;
     actions?: Action[];
 }
-export declare const genericEmail: (input: GenericEmail) => string;
-export {};
-//# sourceMappingURL=index.d.ts.map
+interface LocalizedGenericEmail extends Partial<DefaultValues>, BaseEmail {
+    superHeader?: string;
+    locales: Array<{
+        contentHeader: string;
+        content: string;
+        actions?: Action[];
+    }>;
+    actions?: Action[];
+}
+declare const genericEmail: (input: GenericEmail) => string;
+declare const localizedGenericEmail: (input: LocalizedGenericEmail) => string;
+
+export { Action, BaseEmail, GenericEmail, LocalizedGenericEmail, defaultValues, genericEmail, localizedGenericEmail };
