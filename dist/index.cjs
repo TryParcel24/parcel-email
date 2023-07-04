@@ -76,15 +76,18 @@ var spacer = {
 };
 var genericEmail = (input) => {
   const object = { ...defaultValues, ...input };
-  Object.keys(object.colors).filter((key) => key.includes("FontColor")).forEach((_key) => {
-    const key = _key;
-    if (!object.colors[key]) {
+  Object.keys(object.colors).filter(
+    (key) => key.includes("FontColor")
+  ).forEach((key) => {
+    if (object.colors[key]?.length === 0) {
       object.colors[key] = object.colors.fontColor;
     }
   });
   const headerSection = {
     tagName: "mj-section",
-    attributes: { "background-color": object.colors.superHeaderBackground },
+    attributes: {
+      "background-color": object.colors.superHeaderBackground
+    },
     children: [
       {
         tagName: "mj-column",
@@ -103,7 +106,7 @@ var genericEmail = (input) => {
       }
     ]
   };
-  if (object.superHeader)
+  if (object.superHeader != null) {
     headerSection.children.push({
       tagName: "mj-column",
       attributes: { width: "600px" },
@@ -115,32 +118,33 @@ var genericEmail = (input) => {
             "font-weight": "900",
             "font-size": "35px",
             "padding-bottom": "0px",
-            "padding-top": "0px"
+            "padding-top": "0px",
+            align: object.dir === "rtl" ? "right" : "left"
           },
           content: object.superHeader
         }
       ]
     });
+  }
   const contentHeader = {
     tagName: "mj-text",
     attributes: {
       color: object.colors.contentHeaderFontColor,
       "font-weight": "bold",
-      "font-size": "22px"
+      "font-size": "22px",
+      align: object.dir === "rtl" ? "right" : "left"
     },
-    children: [],
-    content: object.contentHeader
+    content: `<div dir=${object.dir ?? "ltr"}>${object.contentHeader}</div>`
   };
   const contentBody = {
     tagName: "mj-text",
     attributes: {
       "font-size": "16px",
       color: object.colors.contentFontColor,
-      align: "left",
-      "line-height": "1.4"
+      "line-height": "1.4",
+      align: object.dir === "rtl" ? "right" : "left"
     },
-    children: [],
-    content: object.content
+    content: `<div dir=${object.dir ?? "ltr"}>${object.content}</div>`
   };
   const contentActions = object.actions?.map((action) => ({
     tagName: "mj-column",
@@ -162,15 +166,20 @@ var genericEmail = (input) => {
         content: action.label
       }
     ]
-  })) || [];
+  })) ?? [];
   const contentActionsContainer = {
     tagName: "mj-group",
-    attributes: { width: "100%" },
+    attributes: {
+      width: "100%",
+      direction: object.dir ?? "ltr"
+    },
     children: contentActions
   };
   const content = {
     tagName: "mj-section",
-    attributes: { "background-color": object.colors.contentBackground },
+    attributes: {
+      "background-color": object.colors.contentBackground
+    },
     children: [
       {
         tagName: "mj-column",
@@ -206,7 +215,7 @@ var genericEmail = (input) => {
       }
     })
   );
-  if (socialElements.length)
+  if (socialElements.length > 0)
     footer.children.push({
       tagName: "mj-social",
       attributes: {
@@ -216,12 +225,13 @@ var genericEmail = (input) => {
       },
       children: socialElements
     });
-  if (object.address)
+  if (object.address != null) {
     footer.children.push({
       tagName: "mj-text",
       attributes: { align: "center", "font-size": "10px" },
       content: object.address
     });
+  }
   const footerSection = {
     tagName: "mj-section",
     attributes: {
@@ -231,14 +241,14 @@ var genericEmail = (input) => {
     children: [footer]
   };
   const body = [];
-  if (headerSection.children.length) {
+  if (headerSection.children.length > 0) {
     body.push(headerSection);
   }
-  if (content.children.length) {
+  if (content.children.length > 0) {
     body.push(divider);
     body.push(content);
   }
-  if (footer.children.length) {
+  if (footer.children.length > 0) {
     body.push(divider);
     body.push(footerSection);
   }
@@ -272,7 +282,7 @@ var genericEmail = (input) => {
     `
     }
   ];
-  if (input.preview)
+  if (input.preview != null)
     head.push({
       tagName: "mj-preview",
       attributes: {},
@@ -298,7 +308,7 @@ var genericEmail = (input) => {
     fonts: object.fonts,
     validationLevel: "skip"
   });
-  if (mjml.errors.length)
+  if (mjml.errors.length > 0)
     throw mjml.errors;
   return mjml.html;
 };
@@ -310,7 +320,7 @@ var localizedGenericEmail = (input) => {
   Object.keys(object.colors).filter(
     (key) => key.includes("FontColor")
   ).forEach((key) => {
-    if (!object.colors[key]) {
+    if (object.colors[key]?.length === 0) {
       object.colors[key] = object.colors.fontColor;
     }
   });
@@ -335,7 +345,7 @@ var localizedGenericEmail = (input) => {
       }
     ]
   };
-  if (object.superHeader) {
+  if (object.superHeader != null) {
     headerSection.children.push({
       tagName: "mj-column",
       attributes: { width: "600px" },
@@ -365,21 +375,21 @@ var localizedGenericEmail = (input) => {
           attributes: {
             color: object.colors.contentHeaderFontColor,
             "font-weight": "bold",
-            "font-size": "22px"
+            "font-size": "22px",
+            align: locale.dir === "rtl" ? "right" : "left"
           },
-          children: [],
-          content: locale.contentHeader
+          content: `<div dir="${locale.dir ?? "ltr"}">${locale.contentHeader}</div>`
         },
         {
           tagName: "mj-text",
           attributes: {
             "font-size": "16px",
             color: object.colors.contentFontColor,
-            align: "left",
+            align: locale.dir === "rtl" ? "right" : "left",
             "line-height": "1.4"
           },
           children: [],
-          content: locale.content
+          content: `<div dir="${locale.dir ?? "ltr"}">${locale.content}</div>`
         }
       ]
     });
@@ -403,10 +413,10 @@ var localizedGenericEmail = (input) => {
           content: action.label
         }
       ]
-    })) || [];
+    })) ?? [];
     contents.push({
       tagName: "mj-group",
-      attributes: { width: "100%" },
+      attributes: { width: "100%", direction: locale.dir },
       children: contentActions2
     });
     contents.push(spacer);
@@ -468,7 +478,7 @@ var localizedGenericEmail = (input) => {
       }
     })
   );
-  if (socialElements.length) {
+  if (socialElements.length > 0) {
     footer.children.push({
       tagName: "mj-social",
       attributes: {
@@ -479,7 +489,7 @@ var localizedGenericEmail = (input) => {
       children: socialElements
     });
   }
-  if (object.address) {
+  if (object.address != null) {
     footer.children.push({
       tagName: "mj-text",
       attributes: { align: "center", "font-size": "10px" },
@@ -495,14 +505,14 @@ var localizedGenericEmail = (input) => {
     children: [footer]
   };
   const body = [];
-  if (headerSection.children.length) {
+  if (headerSection.children.length > 0) {
     body.push(headerSection);
   }
-  if (content.children.length) {
+  if (content.children.length > 0) {
     body.push(divider);
     body.push(content);
   }
-  if (footer.children.length) {
+  if (footer.children.length > 0) {
     body.push(divider);
     body.push(footerSection);
   }
@@ -536,7 +546,7 @@ var localizedGenericEmail = (input) => {
     `
     }
   ];
-  if (input.preview) {
+  if (input.preview != null) {
     head.push({
       tagName: "mj-preview",
       attributes: {},
@@ -563,7 +573,7 @@ var localizedGenericEmail = (input) => {
     fonts: object.fonts,
     validationLevel: "skip"
   });
-  if (mjml.errors.length)
+  if (mjml.errors.length > 0)
     throw mjml.errors;
   return mjml.html;
 };
