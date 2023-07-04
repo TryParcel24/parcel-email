@@ -1,9 +1,10 @@
 import mjmlCore from "mjml";
-import { MJMLJsonObject } from "mjml-core";
+import { type MJMLJsonObject } from "mjml-core";
 
-interface Socials {
-  [key: string]: { href?: string; src?: string; order?: number } | undefined;
-}
+type Socials = Record<
+  string,
+  { href?: string; src?: string; order?: number } | undefined
+>;
 
 interface Colors {
   background: string;
@@ -25,7 +26,7 @@ interface DefaultValues {
   address?: string;
   socials: Socials;
   colors: Colors;
-  fonts: { [key: string]: string };
+  fonts: Record<string, string>;
 }
 
 export const defaultValues: DefaultValues = {
@@ -58,6 +59,7 @@ export interface BaseEmail {
 }
 
 export interface GenericEmail extends Partial<DefaultValues>, BaseEmail {
+  dir?: "rtl" | "ltr";
   superHeader?: string;
   contentHeader: string;
   content: string;
@@ -66,9 +68,10 @@ export interface GenericEmail extends Partial<DefaultValues>, BaseEmail {
 
 export interface LocalizedGenericEmail
   extends Partial<DefaultValues>,
-  BaseEmail {
+    BaseEmail {
   superHeader?: string;
   locales: Array<{
+    dir?: "rtl" | "ltr";
     contentHeader: string;
     content: string;
     actions?: Action[];
@@ -103,13 +106,17 @@ const spacer: MJMLJsonObject = {
   attributes: { padding: "10px" },
 };
 
-export const genericEmail = (input: GenericEmail) => {
+/**
+ *  @throws {import("mjml-core").MJMLParseError[]}
+ */
+export const genericEmail = (input: GenericEmail): string => {
   const object: DefaultValues & GenericEmail = { ...defaultValues, ...input };
   Object.keys(object.colors)
-    .filter((key) => key.includes("FontColor"))
-    .forEach((_key) => {
-      const key = _key as keyof typeof object.colors;
-      if (!object.colors[key]) {
+    .filter((key): key is keyof typeof object.colors =>
+      key.includes("FontColor")
+    )
+    .forEach((key) => {
+      if (object.colors[key]?.length === 0) {
         object.colors[key] = object.colors.fontColor;
       }
     });
@@ -117,7 +124,9 @@ export const genericEmail = (input: GenericEmail) => {
   // -- HEADER SECTION START --
   const headerSection: MJMLJsonObject = {
     tagName: "mj-section",
-    attributes: { "background-color": object.colors.superHeaderBackground },
+    attributes: {
+      "background-color": object.colors.superHeaderBackground,
+    },
     children: [
       {
         tagName: "mj-column",
@@ -137,7 +146,7 @@ export const genericEmail = (input: GenericEmail) => {
     ],
   };
 
-  if (object.superHeader)
+  if (object.superHeader != null) {
     headerSection.children.push({
       tagName: "mj-column",
       attributes: { width: "600px" },
@@ -150,11 +159,13 @@ export const genericEmail = (input: GenericEmail) => {
             "font-size": "35px",
             "padding-bottom": "0px",
             "padding-top": "0px",
+            align: object.dir === "rtl" ? "right" : "left",
           },
           content: object.superHeader,
         },
       ],
     });
+  }
   // -- HEADER SECTION END --
 
   // -- CONTENT START --
@@ -164,9 +175,9 @@ export const genericEmail = (input: GenericEmail) => {
       color: object.colors.contentHeaderFontColor,
       "font-weight": "bold",
       "font-size": "22px",
+      align: object.dir === "rtl" ? "right" : "left",
     },
-    children: [],
-    content: object.contentHeader,
+    content: `<div dir=${object.dir ?? "ltr"}>${object.contentHeader}</div>`,
   };
 
   const contentBody: MJMLJsonObject = {
@@ -174,11 +185,10 @@ export const genericEmail = (input: GenericEmail) => {
     attributes: {
       "font-size": "16px",
       color: object.colors.contentFontColor,
-      align: "left",
       "line-height": "1.4",
+      align: object.dir === "rtl" ? "right" : "left",
     },
-    children: [],
-    content: object.content,
+    content: `<div dir=${object.dir ?? "ltr"}>${object.content}</div>`,
   };
 
   const contentActions: MJMLJsonObject[] =
@@ -202,17 +212,22 @@ export const genericEmail = (input: GenericEmail) => {
           content: action.label,
         },
       ],
-    })) || [];
+    })) ?? [];
 
   const contentActionsContainer: MJMLJsonObject = {
     tagName: "mj-group",
-    attributes: { width: "100%" },
+    attributes: {
+      width: "100%",
+      direction: object.dir ?? "ltr",
+    },
     children: contentActions,
   };
 
   const content: MJMLJsonObject = {
     tagName: "mj-section",
-    attributes: { "background-color": object.colors.contentBackground },
+    attributes: {
+      "background-color": object.colors.contentBackground,
+    },
     children: [
       {
         tagName: "mj-column",
@@ -253,7 +268,7 @@ export const genericEmail = (input: GenericEmail) => {
       })
     );
 
-  if (socialElements.length)
+  if (socialElements.length > 0)
     footer.children.push({
       tagName: "mj-social",
       attributes: {
@@ -264,12 +279,13 @@ export const genericEmail = (input: GenericEmail) => {
       children: socialElements,
     });
 
-  if (object.address)
+  if (object.address != null) {
     footer.children.push({
       tagName: "mj-text",
       attributes: { align: "center", "font-size": "10px" },
       content: object.address,
     });
+  }
 
   const footerSection: MJMLJsonObject = {
     tagName: "mj-section",
@@ -279,19 +295,19 @@ export const genericEmail = (input: GenericEmail) => {
     },
     children: [footer],
   };
+
   // -- FOOTER END --
 
-  //
   const body: MJMLJsonObject[] = [];
 
-  if (headerSection.children.length) {
+  if (headerSection.children.length > 0) {
     body.push(headerSection);
   }
-  if (content.children.length) {
+  if (content.children.length > 0) {
     body.push(divider);
     body.push(content);
   }
-  if (footer.children.length) {
+  if (footer.children.length > 0) {
     body.push(divider);
     body.push(footerSection);
   }
@@ -328,7 +344,7 @@ export const genericEmail = (input: GenericEmail) => {
     `,
     },
   ];
-  if (input.preview)
+  if (input.preview != null)
     head.push({
       tagName: "mj-preview",
       attributes: {},
@@ -358,11 +374,15 @@ export const genericEmail = (input: GenericEmail) => {
     validationLevel: "skip",
   });
 
-  if (mjml.errors.length) throw mjml.errors;
+  // eslint-disable-next-line @typescript-eslint/no-throw-literal
+  if (mjml.errors.length > 0) throw mjml.errors;
   return mjml.html;
 };
 
-export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
+/**
+ *  @throws {import("mjml-core").MJMLParseError[]}
+ */
+export const localizedGenericEmail = (input: LocalizedGenericEmail): string => {
   const object: DefaultValues & typeof input = {
     ...defaultValues,
     ...input,
@@ -373,7 +393,7 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
       key.includes("FontColor")
     )
     .forEach((key) => {
-      if (!object.colors[key]) {
+      if (object.colors[key]?.length === 0) {
         object.colors[key] = object.colors.fontColor;
       }
     });
@@ -401,7 +421,7 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
     ],
   };
 
-  if (object.superHeader) {
+  if (object.superHeader != null) {
     headerSection.children.push({
       tagName: "mj-column",
       attributes: { width: "600px" },
@@ -435,20 +455,22 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
             color: object.colors.contentHeaderFontColor,
             "font-weight": "bold",
             "font-size": "22px",
+            align: locale.dir === "rtl" ? "right" : "left",
           },
-          children: [],
-          content: locale.contentHeader,
+          content: `<div dir="${locale.dir ?? "ltr"}">${
+            locale.contentHeader
+          }</div>`,
         },
         {
           tagName: "mj-text",
           attributes: {
             "font-size": "16px",
             color: object.colors.contentFontColor,
-            align: "left",
+            align: locale.dir === "rtl" ? "right" : "left",
             "line-height": "1.4",
           },
           children: [],
-          content: locale.content,
+          content: `<div dir="${locale.dir ?? "ltr"}">${locale.content}</div>`,
         },
       ],
     });
@@ -474,11 +496,11 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
             content: action.label,
           },
         ],
-      })) || [];
+      })) ?? [];
 
     contents.push({
       tagName: "mj-group",
-      attributes: { width: "100%" },
+      attributes: { width: "100%", direction: locale.dir },
       children: contentActions,
     });
 
@@ -550,7 +572,7 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
       })
     );
 
-  if (socialElements.length) {
+  if (socialElements.length > 0) {
     footer.children.push({
       tagName: "mj-social",
       attributes: {
@@ -562,7 +584,7 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
     });
   }
 
-  if (object.address) {
+  if (object.address != null) {
     footer.children.push({
       tagName: "mj-text",
       attributes: { align: "center", "font-size": "10px" },
@@ -583,14 +605,14 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
   //
   const body: MJMLJsonObject[] = [];
 
-  if (headerSection.children.length) {
+  if (headerSection.children.length > 0) {
     body.push(headerSection);
   }
-  if (content.children.length) {
+  if (content.children.length > 0) {
     body.push(divider);
     body.push(content);
   }
-  if (footer.children.length) {
+  if (footer.children.length > 0) {
     body.push(divider);
     body.push(footerSection);
   }
@@ -627,7 +649,7 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
     `,
     },
   ];
-  if (input.preview) {
+  if (input.preview != null) {
     head.push({
       tagName: "mj-preview",
       attributes: {},
@@ -658,6 +680,7 @@ export const localizedGenericEmail = (input: LocalizedGenericEmail) => {
     validationLevel: "skip",
   });
 
-  if (mjml.errors.length) throw mjml.errors;
+  // eslint-disable-next-line @typescript-eslint/no-throw-literal
+  if (mjml.errors.length > 0) throw mjml.errors;
   return mjml.html;
 };

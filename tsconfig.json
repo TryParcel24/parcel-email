@@ -11,6 +11,14 @@
     "skipLibCheck": true,
     "noEmit": true
   },
+  "include": [
+    "src",
+    "server.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
   "ts-node": {
     "esm": true,
     "swc": true

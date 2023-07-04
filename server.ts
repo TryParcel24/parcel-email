@@ -10,8 +10,9 @@ liveServer.start({
   open: false,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 watch("./src", async (event, filename) => {
-  console.log(`${event}: ${filename}`);
+  console.log(`${event}: ${filename ?? "?"}`);
   try {
     const generator = await import(`./src/index.js?_t=${Date.now()}`);
     const defaultValues = await import(
