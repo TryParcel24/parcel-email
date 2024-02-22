@@ -1,5 +1,23 @@
 import type { LocalizedGenericEmail, GenericEmail } from "./index.js";
 
+export const defaultValues = {
+  socials: {},
+  colors: {
+    primary: "#FED12C",
+    secondary: "#09273D",
+
+    contentBackground: "#E5E7EB",
+    // contentHeaderBackground: "#E5E7EB",
+    actionsFontColor: "#000000",
+    footerBackground: "#E5E7EB",
+  },
+  fonts: ["Exo 2", "https://fonts.googleapis.com/css2?family=Exo+2"],
+  logo: {
+    image: "https://parcel-media.s3.me-south-1.amazonaws.com/parcel_logo.png",
+    href: "https://tryparcel.com",
+  },
+} as const;
+
 export const genericEmailDefaultValues: GenericEmail = {
   superHeader: "Topic",
   // dir: "rtl",
@@ -47,7 +65,7 @@ export const localizedGenericEmailDefaultValues: LocalizedGenericEmail = {
     },
     {
       contentHeader: "رأس المحتوى",
-      content: "ال�حتوى ",
+      content: "المحتوى ",
       dir: "rtl",
       actions: [
         {

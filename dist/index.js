@@ -5,6 +5,7 @@ var defaultValues = {
   colors: {
     background: "#09273D",
     contentBackground: "#E5E7EB",
+    // contentHeaderBackground: "#E5E7EB",
     contentFontColor: "#09273D",
     contentHeaderFontColor: "#09273D",
     superHeaderBackground: "#FED12C",

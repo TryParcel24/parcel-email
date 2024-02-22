@@ -1,6 +1,10 @@
 {
-  "language": "en",
-  "words": ["MJML", "decache"],
+  "language": "en,ar",
+  "words": [
+    "decache",
+    "MJML",
+    "tsup"
+  ],
   "version": "0.2",
   "flagWords": []
 }
